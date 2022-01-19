@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Flex, GridItem } from "@chakra-ui/react";
-import { LockIcon, UnlockIcon } from "@chakra-ui/icons";
+
+import { GifLock } from "./GifLock";
 
 export const GifListItem: React.FC = () => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -11,7 +12,7 @@ export const GifListItem: React.FC = () => {
             minW={0}
             h="260px"
             bg="orange"
-            _hover={{ cursor: "pointer" }}
+            _hover={{ cursor: "pointer", boxShadow: "inset 0 0 0 4px #4327f5" }}
             position="relative"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -26,17 +27,7 @@ export const GifListItem: React.FC = () => {
                     transition="opacity 250ms ease-in"
                     opacity={isHovered ? 1 : 0}
                 />
-                <Flex m={4} alignItems="center" fontWeight="medium" fontSize={12} h={5} zIndex={1}>
-                    {isLocked ? (
-                        <>
-                            <LockIcon mr={2} /> {isHovered ? "Click to unlock" : null}
-                        </>
-                    ) : isHovered ? (
-                        <>
-                            <UnlockIcon mr={2} /> Click to lock
-                        </>
-                    ) : null}
-                </Flex>
+                <GifLock isHovered={isHovered} isLocked={isLocked} />
             </Flex>
         </GridItem>
     );
