@@ -1,10 +1,12 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "@components": ["components"],
-      "@api": ["api"],
-      "@containers": ["containers"],
+    "compilerOptions": {
+        "baseUrl": "./src",
+        "paths": {
+            "@api": ["api"],
+            "@store": ["store"],
+            "@hooks": ["hooks"],
+            "@components": ["components"],
+            "@containers": ["containers"]
+        }
     }
-  }
 }

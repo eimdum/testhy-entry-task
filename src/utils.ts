@@ -10,13 +10,13 @@ export function sortByImportDateTime(sortableData: GifsResult["data"]) {
 }
 
 export function getRandomSearchQuery() {
-    const searchQueryWords = ["programming", "developer", "frontend", "baltic", "animals", "dog", "cat"];
+    const searchQueryWords = ["programming", "developer", "frontend", "animals", "dog", "cat", "gaming", "meme"];
 
     return searchQueryWords[Math.floor(Math.random() * searchQueryWords.length)];
 }
 
 export function getRandomOffsetNumber() {
-    const maxOffset = 10;
+    const maxOffset = 50;
     const minOffset = 0;
 
     return Math.floor(Math.random() * (maxOffset - minOffset + 1) + minOffset);

@@ -2,14 +2,18 @@ import { useState } from "react";
 import { Flex, GridItem, Image } from "@chakra-ui/react";
 
 import { GifLock } from "./GifLock";
+import { useAppStore } from "@hooks";
 
 interface GifListItemProps {
     gifSrc: string;
+    index: number;
+    importDateTime: string;
 }
 
-export const GifListItem: React.FC<GifListItemProps> = ({ gifSrc }) => {
+export const GifListItem: React.FC<GifListItemProps> = ({ gifSrc, index, importDateTime }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [isLocked, setIsLocked] = useState<boolean>(false);
+    const { updateLockedGifs } = useAppStore();
 
     return (
         <GridItem
@@ -20,7 +24,10 @@ export const GifListItem: React.FC<GifListItemProps> = ({ gifSrc }) => {
             position="relative"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => setIsLocked(!isLocked)}
+            onClick={() => {
+                setIsLocked(!isLocked);
+                updateLockedGifs({ gifUrl: gifSrc, index, importDateTime }, !isLocked);
+            }}
         >
             <Image w="100%" h="100%" src={gifSrc} objectFit="cover" />
             <Flex
