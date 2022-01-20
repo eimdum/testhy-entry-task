@@ -6,14 +6,23 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { extendedTheme } from "./theme";
+import { AppStoreProvider } from "@store";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+    },
+});
 
 ReactDOM.render(
     <React.StrictMode>
         <QueryClientProvider client={queryClient}>
             <ChakraProvider theme={extendedTheme}>
-                <App />
+                <AppStoreProvider>
+                    <App />
+                </AppStoreProvider>
             </ChakraProvider>
         </QueryClientProvider>
     </React.StrictMode>,

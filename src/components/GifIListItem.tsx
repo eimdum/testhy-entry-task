@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { Flex, GridItem, Image } from "@chakra-ui/react";
+import { Flex, GridItem, Image, Spinner } from "@chakra-ui/react";
 
 import { GifLock } from "./GifLock";
 
 interface GifListItemProps {
     gifSrc: string;
+    onGifItemClick: (isLocked: boolean) => void;
 }
 
-export const GifListItem: React.FC<GifListItemProps> = ({ gifSrc }) => {
+export const GifListItem: React.FC<GifListItemProps> = ({ gifSrc, onGifItemClick }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     const [isLocked, setIsLocked] = useState<boolean>(false);
 
@@ -20,9 +21,14 @@ export const GifListItem: React.FC<GifListItemProps> = ({ gifSrc }) => {
             position="relative"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => setIsLocked(!isLocked)}
+            onClick={() => {
+                setIsLocked(!isLocked);
+                onGifItemClick(!isLocked);
+            }}
         >
-            <Image w="100%" h="100%" src={gifSrc} objectFit="cover" />
+            <Flex height="100%" justifyContent="center" alignItems="center">
+                <Image w="100%" h="100%" src={gifSrc} objectFit="cover" fallback={<Spinner size="lg" />} />
+            </Flex>
             <Flex
                 w="100%"
                 h="100%"

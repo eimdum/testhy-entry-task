@@ -5,7 +5,11 @@ import { NavigationActionButton } from "./NavigationActionButton";
 export const Navigation: React.FC = () => {
     return (
         <Flex
+            position="sticky"
+            top={0}
+            zIndex={10}
             alignItems="center"
+            background={"custom.gray"}
             px={5}
             py={{ base: 2, sm: undefined }}
             as="nav"

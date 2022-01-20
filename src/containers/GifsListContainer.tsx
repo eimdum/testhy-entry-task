@@ -1,23 +1,47 @@
+import React from "react";
 import { useQuery } from "react-query";
-import { GifsResult } from "@giphy/js-fetch-api";
 import { Flex } from "@chakra-ui/react";
+import { GifsResult } from "@giphy/js-fetch-api";
 
+import { Gif } from "@store";
 import { GifList } from "@components";
+import { useAppStore, useSpacebarSearch } from "@hooks";
 import { apiRoutes, axiosClient, RequestKeys } from "@api";
 
-import { sortByImportDateTime } from "../utils";
-
 export const GifsListContainer: React.FC = () => {
-    const { data, isLoading, isError } = useQuery(RequestKeys.SearchGif, async () => {
+    useSpacebarSearch();
+    const {
+        gifs,
+        searchGifParams: { q, offset },
+        updateGifs,
+    } = useAppStore();
+
+    const { data, isLoading, isError, refetch } = useQuery(RequestKeys.SearchGif, async () => {
         const result = await axiosClient.get<GifsResult>(apiRoutes.searchGif, {
             params: {
-                q: "cat",
-                offset: 1,
+                q,
+                offset,
             },
         });
 
         return result.data;
     });
+
+    React.useEffect(() => {
+        refetch();
+    }, [q, offset, refetch]);
+
+    React.useEffect(() => {
+        const gifData = data?.data.map<Gif>((item) => ({
+            importDateTime: item.import_datetime,
+            url: item.images.downsized.url,
+        }));
+
+        if (gifData) {
+            updateGifs(gifData);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data]);
 
     if (isLoading) {
         return <Flex>Is Loading</Flex>;
@@ -27,5 +51,5 @@ export const GifsListContainer: React.FC = () => {
         return <Flex>Failed to load</Flex>;
     }
 
-    return <GifList gifsList={sortByImportDateTime(data?.data ?? [])} />;
+    return <GifList gifsList={gifs} />;
 };
