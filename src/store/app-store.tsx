@@ -1,34 +1,40 @@
 import React from "react";
-import { GifsResult } from "@giphy/js-fetch-api";
 
+import { Gif, SearchGifParams, LockedGifState, LockGif } from "./types";
 import { getRandomOffsetNumber, getRandomSearchQuery } from "../utils";
 
-interface SearchGifParams {
-    q: string;
-    offset: number;
-}
-
-interface LockGif {
-    index: number;
-    gifUrl: string;
-    importDateTime: string;
-}
-
 interface AppStoreContextState {
+    gifs: Gif[];
     searchGifParams: SearchGifParams;
+    lockedGifs: LockedGifState;
     searchNewGifs: () => void;
-    lockedGifs: Record<number, { url: string; importDateTime: string }>;
+    updateGifs: (newGifs: Gif[]) => void;
     updateLockedGifs: (gif: LockGif, isLocked: boolean) => void;
 }
 
 export const AppStoreContext = React.createContext<AppStoreContextState | undefined>(undefined);
 
 export const AppStoreProvider: React.FC = ({ children }) => {
+    const [gifs, setGifs] = React.useState<Gif[]>([]);
+    const [lockedGifs, setLockedGifs] = React.useState<LockedGifState>({});
     const [searchGifParams, setSearchGifParams] = React.useState<SearchGifParams>({
         q: getRandomSearchQuery(),
         offset: getRandomOffsetNumber(),
     });
-    const [lockedGifs, setLockedGifs] = React.useState<Record<number, { url: string; importDateTime: string }>>({});
+
+    const updateGifs = (newGifs: Gif[]) => {
+        setGifs([
+            ...newGifs.map((gif, index) => {
+                const lockedGif = lockedGifs[index];
+
+                if (lockedGif) {
+                    return lockedGif;
+                }
+
+                return gif;
+            }),
+        ]);
+    };
 
     const searchNewGifs = () => {
         const newSearchQuery = getRandomSearchQuery();
@@ -37,23 +43,25 @@ export const AppStoreProvider: React.FC = ({ children }) => {
         setSearchGifParams({ q: newSearchQuery, offset: newOffset });
     };
 
-    const updateLockedGifs = (gif: LockGif, isLocked: boolean) => {
-        const lockedGif = lockedGifs?.[gif.index];
+    const updateLockedGifs = ({ index, ...restGif }: LockGif, isLocked: boolean) => {
+        const lockedGif = lockedGifs?.[index];
 
         if (!isLocked && lockedGif) {
-            delete lockedGifs[gif.index];
+            delete lockedGifs[index];
         } else {
-            lockedGifs[gif.index] = { importDateTime: gif.importDateTime, url: gif.gifUrl };
+            lockedGifs[index] = { ...restGif };
         }
 
         setLockedGifs({ ...lockedGifs });
     };
 
     const state: AppStoreContextState = {
+        gifs,
+        lockedGifs,
         searchGifParams,
+        updateGifs,
         searchNewGifs,
         updateLockedGifs,
-        lockedGifs,
     };
 
     return <AppStoreContext.Provider value={state}>{children}</AppStoreContext.Provider>;
