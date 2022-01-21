@@ -6,11 +6,12 @@ import { GifLock } from "./GifLock";
 interface GifListItemProps {
     gifSrc: string;
     onGifItemClick: (isLocked: boolean) => void;
+    isGifLocked?: boolean;
 }
 
-export const GifListItem: React.FC<GifListItemProps> = ({ gifSrc, onGifItemClick }) => {
+export const GifListItem: React.FC<GifListItemProps> = ({ gifSrc, onGifItemClick, isGifLocked }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
-    const [isLocked, setIsLocked] = useState<boolean>(false);
+    const [isLocked, setIsLocked] = useState<boolean>(isGifLocked ?? false);
 
     return (
         <GridItem

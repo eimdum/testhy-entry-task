@@ -3,10 +3,11 @@ import ReactDOM from "react-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "react-query";
 
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import { extendedTheme } from "./theme";
 import { AppStoreProvider } from "@store";
+
+import App from "./App";
+import { extendedTheme } from "./theme";
+import reportWebVitals from "./reportWebVitals";
 
 const queryClient = new QueryClient({
     defaultOptions: {
