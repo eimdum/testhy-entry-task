@@ -1,5 +1,5 @@
 export type Gif = BaseGif;
-export type LockedGifState = Record<number, BaseGif>;
+export type LockedGifState = Record<number, BaseGif | undefined>;
 
 export interface BaseGif {
     url: string;

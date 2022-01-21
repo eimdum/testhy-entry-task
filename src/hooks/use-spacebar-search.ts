@@ -18,10 +18,10 @@ export function useSpacebarSearch() {
     );
 
     React.useEffect(() => {
-        document.addEventListener("keydown", onKeyDownSearchNewGifs);
+        window.addEventListener("keydown", onKeyDownSearchNewGifs);
 
         return () => {
-            document.removeEventListener("keydown", onKeyDownSearchNewGifs);
+            window.removeEventListener("keydown", onKeyDownSearchNewGifs);
         };
     }, [onKeyDownSearchNewGifs]);
 

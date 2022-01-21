@@ -1,5 +1,6 @@
 import React from "react";
 
+import { getLockedGifsFromLocalStorage, saveLockedGifsToLocalStorage } from "./localStorage";
 import { Gif, SearchGifParams, LockedGifState, LockGif } from "./types";
 import { getRandomOffsetNumber, getRandomSearchQuery } from "../utils";
 
@@ -16,24 +17,24 @@ export const AppStoreContext = React.createContext<AppStoreContextState | undefi
 
 export const AppStoreProvider: React.FC = ({ children }) => {
     const [gifs, setGifs] = React.useState<Gif[]>([]);
-    const [lockedGifs, setLockedGifs] = React.useState<LockedGifState>({});
+    const [lockedGifs, setLockedGifs] = React.useState<LockedGifState>(getLockedGifsFromLocalStorage());
     const [searchGifParams, setSearchGifParams] = React.useState<SearchGifParams>({
         q: getRandomSearchQuery(),
         offset: getRandomOffsetNumber(),
     });
 
     const updateGifs = (newGifs: Gif[]) => {
-        setGifs([
-            ...newGifs.map((gif, index) => {
-                const lockedGif = lockedGifs[index];
+        const mixedGifList = newGifs.map((gif, index) => {
+            const lockedGif = lockedGifs[index];
 
-                if (lockedGif) {
-                    return lockedGif;
-                }
+            if (lockedGif) {
+                return lockedGif;
+            }
 
-                return gif;
-            }),
-        ]);
+            return gif;
+        });
+
+        setGifs([...mixedGifList]);
     };
 
     const searchNewGifs = () => {
@@ -52,6 +53,7 @@ export const AppStoreProvider: React.FC = ({ children }) => {
             lockedGifs[index] = { ...restGif };
         }
 
+        saveLockedGifsToLocalStorage(lockedGifs);
         setLockedGifs({ ...lockedGifs });
     };
 
