@@ -22,4 +22,4 @@ To run project in `prod` mode run `yarn start:prod` (it will run build and serve
 -   ReactJs;
 -   React Context for global state management;
 -   Chakra UI as component library;
--   Local Storage to keep locked gifs;
+-   Local Storage to keep locked gifs after browser refresh/restarts;
