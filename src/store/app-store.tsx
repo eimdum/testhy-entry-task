@@ -1,8 +1,8 @@
 import React from "react";
 
-import { getLockedGifsFromLocalStorage, saveLockedGifsToLocalStorage } from "./localStorage";
 import { Gif, SearchGifParams, LockedGifState, LockGif } from "./types";
-import { getRandomOffsetNumber, getRandomSearchQuery } from "../utils";
+import { getLockedGifsFromLocalStorage, saveLockedGifsToLocalStorage } from "./localStorage";
+import { getRandomOffsetNumber, getRandomSearchQuery, sortByImportDateTime } from "../utils";
 
 interface AppStoreContextState {
     gifs: Gif[];
@@ -17,6 +17,7 @@ export const AppStoreContext = React.createContext<AppStoreContextState | undefi
 
 export const AppStoreProvider: React.FC = ({ children }) => {
     const [gifs, setGifs] = React.useState<Gif[]>([]);
+    const [initSort, setInitSort] = React.useState<boolean>(false);
     const [lockedGifs, setLockedGifs] = React.useState<LockedGifState>(getLockedGifsFromLocalStorage());
     const [searchGifParams, setSearchGifParams] = React.useState<SearchGifParams>({
         q: getRandomSearchQuery(),
@@ -24,7 +25,7 @@ export const AppStoreProvider: React.FC = ({ children }) => {
     });
 
     const updateGifs = (newGifs: Gif[]) => {
-        const mixedGifList = newGifs.map((gif, index) => {
+        let mixedGifList = newGifs.map((gif, index) => {
             const lockedGif = lockedGifs[index];
 
             if (lockedGif) {
@@ -33,6 +34,25 @@ export const AppStoreProvider: React.FC = ({ children }) => {
 
             return gif;
         });
+
+        // Sort images only when browser refreshes/restarts.
+        if (!initSort) {
+            mixedGifList = sortByImportDateTime(mixedGifList);
+            const updatedLockedGifIndex: LockedGifState = {};
+
+            Object.values(lockedGifs).forEach((lockedGif) => {
+                mixedGifList.forEach((gif, index) => {
+                    if (gif.url === lockedGif?.url) {
+                        updatedLockedGifIndex[index] = lockedGif;
+                        return;
+                    }
+                });
+            });
+
+            saveLockedGifsToLocalStorage(updatedLockedGifIndex);
+            setLockedGifs({ ...updatedLockedGifIndex });
+            setInitSort(true);
+        }
 
         setGifs([...mixedGifList]);
     };
@@ -50,7 +70,7 @@ export const AppStoreProvider: React.FC = ({ children }) => {
         if (!isLocked && lockedGif) {
             delete lockedGifs[index];
         } else {
-            lockedGifs[index] = { ...restGif };
+            lockedGifs[index] = restGif;
         }
 
         saveLockedGifsToLocalStorage(lockedGifs);
