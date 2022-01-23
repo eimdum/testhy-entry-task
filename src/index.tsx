@@ -1,16 +1,31 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ChakraProvider } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+import { AppStoreProvider } from "@store";
 
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import { extendedTheme } from "./theme";
+import reportWebVitals from "./reportWebVitals";
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+    },
+});
 
 ReactDOM.render(
     <React.StrictMode>
-        <ChakraProvider theme={extendedTheme}>
-            <App />
-        </ChakraProvider>
+        <QueryClientProvider client={queryClient}>
+            <ChakraProvider theme={extendedTheme}>
+                <AppStoreProvider>
+                    <App />
+                </AppStoreProvider>
+            </ChakraProvider>
+        </QueryClientProvider>
     </React.StrictMode>,
     document.getElementById("root"),
 );

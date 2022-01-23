@@ -1,13 +1,15 @@
 import { Flex } from "@chakra-ui/react";
-import { GifList } from "@components/GifList";
 
-import { Navigation } from "@components/Navigation";
+import { Navigation, GiphyKeyWarning } from "@components";
+import { GifsListContainer } from "@containers";
+
+import { GIPHY_API_KEY } from "./config";
 
 const App: React.FC = () => {
     return (
-        <Flex flexDir="column" as="main" flex={1} background="custom.gray">
+        <Flex flexDir="column" as="main" flex={1} background="custom.gray" color="white">
             <Navigation />
-            <GifList />
+            {GIPHY_API_KEY ? <GifsListContainer /> : <GiphyKeyWarning />}
         </Flex>
     );
 };

@@ -1,13 +1,31 @@
 import { Grid } from "@chakra-ui/react";
+
+import { Gif } from "@store";
+import { useAppStore } from "@hooks";
+
 import { GifListItem } from "./GifIListItem";
 
-export const GifList: React.FC = () => {
-    const placeholderArray = new Array(15).fill(0);
+interface GifListProps {
+    gifsList: Gif[];
+}
+
+export const GifList: React.FC<GifListProps> = ({ gifsList }) => {
+    const { updateLockedGifs, lockedGifs } = useAppStore();
 
     return (
-        <Grid p={5} gap={6} templateColumns="repeat(auto-fit, minmax(auto, 335px))" justifyContent="center">
-            {placeholderArray.map((_, index) => {
-                return <GifListItem key={index} />;
+        <Grid p={5} gap={6} templateColumns="repeat(auto-fit, minmax(auto, 20.9375rem))" justifyContent="center">
+            {gifsList.map((gif, index) => {
+                const { url } = gif;
+                const isGifLocked = lockedGifs[index];
+
+                return (
+                    <GifListItem
+                        gifSrc={url}
+                        key={`gif-${url}-${index}`}
+                        isGifLocked={!!isGifLocked}
+                        onGifItemClick={(isLocked) => updateLockedGifs({ ...gif, index }, isLocked)}
+                    />
+                );
             })}
         </Grid>
     );
